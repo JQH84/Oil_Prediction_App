@@ -83,11 +83,22 @@ def app():
             st.success("Model successfully retrained on new data!")
             model, scaler = load_model_and_scaler()
             prediction = make_predictions(X_new.iloc[-5:], model, scaler)
-            st.write(f"Predicted price for 5 hours ahead: {prediction[-5]}")
-            st.write(f"Predicted price for 4 hours ahead: {prediction[-4]}")
-            st.write(f"Predicted price for 3 hours ahead: {prediction[-3]}")
-            st.write(f"Predicted price for 2 hours ahead: {prediction[-2]}")
-            st.write(f"Predicted price for 1 hour ahead: {prediction[-1]}")
+            
+            # Create a DataFrame with the original and predicted data
+            data_to_plot = pd.DataFrame({
+            'Hour': ['5 hours ahead', '4 hours ahead', '3 hours ahead', '2 hours ahead', '1 hour ahead'],
+            'Actual': y_new.iloc[-5:].values,
+            'Predicted': prediction
+                                        })
+    
+            # Reshape the DataFrame for plotting
+            data_to_plot = data_to_plot.melt('Hour', var_name='Type', value_name='Price')
+    
+            # Plot the data
+            st.line_chart(data_to_plot)
+            
+            st.write(f"Predicted price for 1 hour ahead: {round(prediction[-1],2)}")
+            
 
 if __name__ == "__main__":
     app()
